@@ -11,6 +11,10 @@ class ToLisoApp extends StatelessWidget {
 }
 
 class FormularioLancamento extends StatelessWidget {
+  final TextEditingController _controladorCampoValor = TextEditingController();
+  final TextEditingController _controladorCampoCategoria =
+      TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -21,18 +25,37 @@ class FormularioLancamento extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          TextField(
-            style: TextStyle(
-              fontSize: 32.0
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _controladorCampoValor,
+              style: TextStyle(fontSize: 24.0),
+              decoration: InputDecoration(
+                  icon: Icon(Icons.monetization_on),
+                  labelText: "Valor",
+                  hintText: "0.00"),
+              keyboardType: TextInputType.numberWithOptions(),
             ),
-            decoration: InputDecoration(
-              labelText: "Valor",
-              hintText: "0.00"
-            ),
-            keyboardType: TextInputType.numberWithOptions(),
           ),
-          TextField(),
-          RaisedButton()
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: TextField(
+                controller: _controladorCampoCategoria,
+                style: TextStyle(fontSize: 24.0),
+                decoration: InputDecoration(
+                    labelText: "Categoria",
+                    hintText: "Por exemplo: Transporte")),
+          ),
+          RaisedButton(
+            child: Text("Inserir"),
+            onPressed: () {
+              final double valor = double.parse(_controladorCampoValor.text);
+              final String categoria = _controladorCampoCategoria.text;
+              final Lancamento lancamento = new Lancamento(valor, categoria);
+              debugPrint("Lançamento Inserido!");
+              debugPrint("$lancamento");
+            },
+          )
         ],
       ),
     );
@@ -95,6 +118,11 @@ class ItemLancamento extends StatelessWidget {
 class Lancamento {
   final double valor;
   final String categoria;
+
+  @override
+  String toString() {
+    return 'Lançamento {valor: $valor, categoria: $categoria}';
+  }
 
   Lancamento(this.valor, this.categoria);
 }
