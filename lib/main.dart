@@ -40,32 +40,37 @@ class FormularioLancamento extends StatelessWidget {
           RaisedButton(
             child: Text("Inserir"),
             onPressed: () {
-              final double valor = double.tryParse(_controladorCampoValor.text);
-              final String categoria = _controladorCampoCategoria.text;
-              final Lancamento lancamento = new Lancamento(valor, categoria);
-              if (valor != null || categoria.isNotEmpty) {
-                debugPrint('Lançamento Inserido!');
-                debugPrint('$lancamento');
-              } else {
-                debugPrint('Falta preencher um dos campos!');
-              }
+              CriarLancamento(context);
             },
           )
         ],
       ),
     );
   }
+
+  void CriarLancamento(BuildContext context) {
+    final double valor = double.tryParse(_controladorCampoValor.text);
+    final String categoria = _controladorCampoCategoria.text;
+    final Lancamento lancamento = new Lancamento(valor, categoria);
+    if (valor != null || categoria.isNotEmpty) {
+      debugPrint('Lançamento Inserido!');
+      debugPrint('$lancamento');
+      Navigator.pop(context, lancamento);
+    } else {
+      debugPrint('Falta preencher um dos campos!');
+    }
+  }
 }
 
 class Editor extends StatelessWidget {
-
   final TextEditingController controlador;
   final String rotulo;
   final String dica;
   final IconData icone;
   final TextInputType tipoTeclado;
 
-  Editor({this.controlador, this.rotulo, this.dica, this.icone, this.tipoTeclado});
+  Editor(
+      {this.controlador, this.rotulo, this.dica, this.icone, this.tipoTeclado});
 
   @override
   Widget build(BuildContext context) {
@@ -104,10 +109,14 @@ class ListaLancamento extends StatelessWidget {
         child: Icon(Icons.add),
         backgroundColor: Colors.brown,
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => FormularioLancamento()),
-          );
+          final Future<Lancamento> future =
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return FormularioLancamento();
+          }));
+          future.then((lancamento) {
+            debugPrint('chegou no then do future');
+            debugPrint('$lancamento');
+          });
         },
       ),
     );
