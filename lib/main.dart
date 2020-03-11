@@ -25,38 +25,60 @@ class FormularioLancamento extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _controladorCampoValor,
-              style: TextStyle(fontSize: 24.0),
-              decoration: InputDecoration(
-                  icon: Icon(Icons.monetization_on),
-                  labelText: "Valor",
-                  hintText: "0.00"),
-              keyboardType: TextInputType.numberWithOptions(),
-            ),
+          Editor(
+            controlador: _controladorCampoValor,
+            rotulo: 'Valor',
+            dica: '0.00',
+            icone: Icons.monetization_on,
+            tipoTeclado: TextInputType.number,
           ),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: TextField(
-                controller: _controladorCampoCategoria,
-                style: TextStyle(fontSize: 24.0),
-                decoration: InputDecoration(
-                    labelText: "Categoria",
-                    hintText: "Por exemplo: Transporte")),
+          Editor(
+            controlador: _controladorCampoCategoria,
+            rotulo: 'Categoria',
+            dica: 'Por exemplo: Transporte',
           ),
           RaisedButton(
             child: Text("Inserir"),
             onPressed: () {
-              final double valor = double.parse(_controladorCampoValor.text);
+              final double valor = double.tryParse(_controladorCampoValor.text);
               final String categoria = _controladorCampoCategoria.text;
               final Lancamento lancamento = new Lancamento(valor, categoria);
-              debugPrint("Lançamento Inserido!");
-              debugPrint("$lancamento");
+              if (valor != null || categoria.isNotEmpty) {
+                debugPrint('Lançamento Inserido!');
+                debugPrint('$lancamento');
+              } else {
+                debugPrint('Falta preencher um dos campos!');
+              }
             },
           )
         ],
+      ),
+    );
+  }
+}
+
+class Editor extends StatelessWidget {
+
+  final TextEditingController controlador;
+  final String rotulo;
+  final String dica;
+  final IconData icone;
+  final TextInputType tipoTeclado;
+
+  Editor({this.controlador, this.rotulo, this.dica, this.icone, this.tipoTeclado});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: TextField(
+        controller: controlador,
+        style: TextStyle(fontSize: 24.0),
+        decoration: InputDecoration(
+            icon: icone != null ? Icon(icone) : null,
+            labelText: rotulo,
+            hintText: dica),
+        keyboardType: tipoTeclado ?? TextInputType.text,
       ),
     );
   }
