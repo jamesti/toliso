@@ -90,21 +90,33 @@ class Editor extends StatelessWidget {
 }
 
 class ListaLancamento extends StatelessWidget {
+
+  final List<Lancamento> _listaLancamentos = List();
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    _listaLancamentos.add(Lancamento(451.23, 'Aluguel'));
+    _listaLancamentos.add(Lancamento(25.0, 'Almoço'));
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Minhas Economias"),
         centerTitle: true,
       ),
-      body: Column(
-        children: <Widget>[
-          ItemLancamento(new Lancamento(-100, 'Restaurante')),
-          ItemLancamento(new Lancamento(200, 'Transferência')),
-          ItemLancamento(new Lancamento(-30, 'Transporte')),
-        ],
+      body: ListView.builder(
+        itemCount: _listaLancamentos.length,
+        itemBuilder: (context, index) {
+          final lancamento = _listaLancamentos[index];
+          return ItemLancamento(lancamento);
+        },
       ),
+//      Column(
+//        children: <Widget>[
+//          ItemLancamento(new Lancamento(-100, 'Restaurante')),
+//          ItemLancamento(new Lancamento(200, 'Transferência')),
+//          ItemLancamento(new Lancamento(-30, 'Transporte')),
+//        ],
+//      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         backgroundColor: Colors.brown,
@@ -116,6 +128,7 @@ class ListaLancamento extends StatelessWidget {
           future.then((lancamento) {
             debugPrint('chegou no then do future');
             debugPrint('$lancamento');
+            _listaLancamentos.add(lancamento);
           });
         },
       ),
