@@ -17,7 +17,6 @@ const _rotuloBotaoInserir = 'Salvar';
 
 class FormularioLancamento extends StatefulWidget {
   final TextEditingController _controladorCampoValor = TextEditingController();
-  String _controladorListaCategoria = _listaCategorias[0];
 
   @override
   _FormularioLancamentoState createState() => _FormularioLancamentoState();
@@ -27,6 +26,7 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
   final _formKey = GlobalKey<FormState>();
 
   bool _autovalidate = false;
+  String _controladorListaCategoria = _listaCategorias[0];
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
                   validador: ValidaLancamento.valor,
                 ),
                 Seletor(
-                  controlador: widget._controladorListaCategoria,
+                  controlador: _controladorListaCategoria,
                   lista: _listaCategorias,
                   dica: _dicaCampoCategoria,
                   rotulo: _rotuloCampoCategoria,
@@ -77,7 +77,7 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
 
   void _criarLancamento(BuildContext context) {
     final double valor = double.tryParse(widget._controladorCampoValor.text);
-    final String categoria = widget._controladorListaCategoria;
+    final String categoria =  _controladorListaCategoria;
     final Lancamento lancamento = Lancamento(valor, categoria);
     if (lancamento != null) {
       Navigator.pop(context, lancamento);

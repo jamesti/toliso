@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 
 class Seletor extends StatefulWidget {
-  String controlador;
   final List<String> lista;
   final String rotulo;
   final String dica;
   final Function validador;
+  String controlador;
 
   Seletor(
-      {this.controlador, this.lista, this.rotulo, this.dica, this.validador});
+      {this.controlador,
+      this.lista,
+      this.rotulo,
+      this.dica,
+      this.validador});
 
   @override
   _SeletorState createState() => _SeletorState();
 }
 
 class _SeletorState extends State<Seletor> {
+  //String valorSelecionado = null;
+
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
@@ -26,10 +32,8 @@ class _SeletorState extends State<Seletor> {
       decoration:
           InputDecoration(hintText: widget.dica, labelText: widget.rotulo),
       validator: widget.validador,
-      onChanged: (String newValue) {
-        setState(() {
-          widget.controlador = newValue;
-        });
+      onChanged: (value) {
+        widget.controlador = value;
       },
       items: widget.lista.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
