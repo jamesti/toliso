@@ -11,7 +11,7 @@ const _dicaCampoValor = '0.00';
 
 const _rotuloCampoCategoria = 'Categoria';
 const List<String> _listaCategorias = ['Aluguel', 'Alimentação', 'Transporte'];
-const _dicaCampoCategoria = 'Exemplo: Transporte';
+const _dicaCampoCategoria = 'Selecione uma Categoria';
 
 const _rotuloBotaoInserir = 'Salvar';
 
@@ -26,7 +26,12 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
   final _formKey = GlobalKey<FormState>();
 
   bool _autovalidate = false;
-  String _controladorListaCategoria = _listaCategorias[0];
+  Seletor _seletorListaCategoria = Seletor(
+    lista: _listaCategorias,
+    dica: _dicaCampoCategoria,
+    rotulo: _rotuloCampoCategoria,
+    validador: ValidaLancamento.categoria,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +55,7 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
                   tipoTeclado: TextInputType.number,
                   validador: ValidaLancamento.valor,
                 ),
-                Seletor(
-                  controlador: _controladorListaCategoria,
-                  lista: _listaCategorias,
-                  dica: _dicaCampoCategoria,
-                  rotulo: _rotuloCampoCategoria,
-                  validador: ValidaLancamento.categoria,
-                ),
+                _seletorListaCategoria,
                 RaisedButton(
                   child: Text(_rotuloBotaoInserir),
                   onPressed: () {
@@ -77,7 +76,7 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
 
   void _criarLancamento(BuildContext context) {
     final double valor = double.tryParse(widget._controladorCampoValor.text);
-    final String categoria =  _controladorListaCategoria;
+    final String categoria = _seletorListaCategoria.valorSelecionado;
     final Lancamento lancamento = Lancamento(valor, categoria);
     if (lancamento != null) {
       Navigator.pop(context, lancamento);

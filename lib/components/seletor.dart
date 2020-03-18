@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class Seletor extends StatefulWidget {
   final List<String> lista;
   final String rotulo;
   final String dica;
   final Function validador;
-  String controlador;
+  String valorSelecionado;
 
-  Seletor(
-      {this.controlador,
-      this.lista,
-      this.rotulo,
-      this.dica,
-      this.validador});
+  Seletor({this.lista, this.rotulo, this.dica, this.validador});
 
   @override
   _SeletorState createState() => _SeletorState();
 }
 
 class _SeletorState extends State<Seletor> {
-  //String valorSelecionado = null;
+  String _valor;
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
-      value: widget.controlador,
+      hint: Text(widget.dica),
+      value: _valor,
       icon: Icon(Icons.arrow_downward),
       iconSize: 24,
       elevation: 16,
@@ -33,7 +30,10 @@ class _SeletorState extends State<Seletor> {
           InputDecoration(hintText: widget.dica, labelText: widget.rotulo),
       validator: widget.validador,
       onChanged: (value) {
-        widget.controlador = value;
+        setState(() {
+          _valor = value;
+          widget.valorSelecionado = value;
+        });
       },
       items: widget.lista.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
