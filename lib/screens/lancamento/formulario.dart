@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tolise/components/editor.dart';
 import 'package:tolise/components/seletor.dart';
+import 'package:tolise/database/dao/lancamento.dart';
 import 'package:tolise/models/lancamento.dart';
 import 'package:tolise/screens/lancamento/validacoes.dart';
 
@@ -24,6 +25,7 @@ class FormularioLancamento extends StatefulWidget {
 
 class _FormularioLancamentoState extends State<FormularioLancamento> {
   final _formKey = GlobalKey<FormState>();
+  final LancamentoDao _dao = new LancamentoDao();
 
   bool _autovalidate = false;
   Seletor _seletorListaCategoria = Seletor(
@@ -77,8 +79,11 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
   void _criarLancamento(BuildContext context) {
     final double valor = double.tryParse(widget._controladorCampoValor.text);
     final String categoria = _seletorListaCategoria.valorSelecionado;
-    final Lancamento lancamento = Lancamento(valor, categoria);
+    final DateTime data_cadastro = DateTime.now();
+    final Lancamento lancamento = Lancamento(valor, categoria, data_cadastro);
+
     if (lancamento != null) {
+      _dao.save(lancamento);
       Navigator.pop(context, lancamento);
     } else {
       Scaffold.of(context)
