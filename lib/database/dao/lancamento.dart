@@ -44,7 +44,7 @@ class LancamentoDao {
       final Lancamento lance = Lancamento(
         row[_valor],
         row[_categoria],
-        row[_data_cadastro]
+        DateTime.parse(row[_data_cadastro])
       );
       lancamentos.add(lance);
     }

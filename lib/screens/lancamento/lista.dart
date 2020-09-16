@@ -5,7 +5,14 @@ import 'package:tolise/screens/lancamento/formulario.dart';
 
 const _tituloAppBar = 'Minhas Economias';
 
-class ListaLancamento extends StatelessWidget {
+class ListaLancamento extends StatefulWidget {
+  List<Lancamento> _listaLancamentos = List();
+
+  @override
+  _ListaLancamentoState createState() => _ListaLancamentoState();
+}
+
+class _ListaLancamentoState extends State<ListaLancamento> {
   final LancamentoDao _dao = new LancamentoDao();
 
   @override
@@ -37,13 +44,13 @@ class ListaLancamento extends StatelessWidget {
             case ConnectionState.active:
               break;
             case ConnectionState.done:
-              final List<Lancamento> lancamentos = snapshot.data;
+              widget._listaLancamentos = snapshot.data;
               return ListView.builder(
                 itemBuilder: (context, index) {
-                  final Lancamento lancamento = lancamentos[index];
+                  final lancamento = widget._listaLancamentos[index];
                   return ItemLancamento(lancamento);
                 },
-                itemCount: lancamentos.length,
+                itemCount: widget._listaLancamentos.length,
               );
               break;
           }
@@ -71,10 +78,9 @@ class ListaLancamento extends StatelessWidget {
 
   void _atualiza(lancamento) {
     if (lancamento != null) {
-      /*setState(() {
-        widget._listaLancamentos.add(lancamento);
+      setState(() {
+        //widget._listaLancamentos.add(lancamento);
       });
-       */
     }
   }
 }

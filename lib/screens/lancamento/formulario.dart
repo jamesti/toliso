@@ -83,8 +83,7 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
     final Lancamento lancamento = Lancamento(valor, categoria, data_cadastro);
 
     if (lancamento != null) {
-      _dao.save(lancamento);
-      Navigator.pop(context, lancamento);
+      _dao.save(lancamento).then((id) => Navigator.pop(context, lancamento));
     } else {
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Erro Inesperado!')));
