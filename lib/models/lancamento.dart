@@ -1,4 +1,5 @@
 class Lancamento {
+  final int id;
   final double valor;
   final String categoria;
   final DateTime data_cadastro;
@@ -8,5 +9,5 @@ class Lancamento {
     return 'Lançamento {valor: $valor, categoria: $categoria}';
   }
 
-  Lancamento(this.valor, this.categoria, this.data_cadastro);
+  Lancamento(this.valor, this.categoria, [this.data_cadastro, this.id]);
 }

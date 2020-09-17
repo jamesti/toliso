@@ -15,13 +15,12 @@ class Seletor extends StatefulWidget {
 }
 
 class _SeletorState extends State<Seletor> {
-  String _valor;
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       hint: Text(widget.dica),
-      value: _valor,
+      value: widget.valorSelecionado,
       icon: Icon(Icons.arrow_downward),
       iconSize: 24,
       elevation: 16,
@@ -31,7 +30,6 @@ class _SeletorState extends State<Seletor> {
       validator: widget.validador,
       onChanged: (value) {
         setState(() {
-          _valor = value;
           widget.valorSelecionado = value;
         });
       },

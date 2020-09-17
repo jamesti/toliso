@@ -19,6 +19,22 @@ const _rotuloBotaoInserir = 'Salvar';
 class FormularioLancamento extends StatefulWidget {
   final TextEditingController _controladorCampoValor = TextEditingController();
 
+  final Seletor _seletorListaCategoria = Seletor(
+    lista: _listaCategorias,
+    dica: _dicaCampoCategoria,
+    rotulo: _rotuloCampoCategoria,
+    validador: ValidaLancamento.categoria,
+  );
+
+  final Lancamento _lancamento;
+
+  FormularioLancamento([this._lancamento]){
+    if (_lancamento != null){
+      _controladorCampoValor.text = _lancamento.valor.toString();
+      _seletorListaCategoria.valorSelecionado = _lancamento.categoria;
+    }
+  }
+
   @override
   _FormularioLancamentoState createState() => _FormularioLancamentoState();
 }
@@ -28,12 +44,6 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
   final LancamentoDao _dao = new LancamentoDao();
 
   bool _autovalidate = false;
-  Seletor _seletorListaCategoria = Seletor(
-    lista: _listaCategorias,
-    dica: _dicaCampoCategoria,
-    rotulo: _rotuloCampoCategoria,
-    validador: ValidaLancamento.categoria,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +67,7 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
                   tipoTeclado: TextInputType.number,
                   validador: ValidaLancamento.valor,
                 ),
-                _seletorListaCategoria,
+                widget._seletorListaCategoria,
                 RaisedButton(
                   child: Text(_rotuloBotaoInserir),
                   onPressed: () {
@@ -78,7 +88,7 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
 
   void _criarLancamento(BuildContext context) {
     final double valor = double.tryParse(widget._controladorCampoValor.text);
-    final String categoria = _seletorListaCategoria.valorSelecionado;
+    final String categoria = widget._seletorListaCategoria.valorSelecionado;
     final DateTime data_cadastro = DateTime.now();
     final Lancamento lancamento = Lancamento(valor, categoria, data_cadastro);
 

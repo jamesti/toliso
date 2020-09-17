@@ -93,16 +93,22 @@ class ItemLancamento extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        leading: Icon(Icons.monetization_on),
-        title: Text(
-          _lancamento.valor.toString(),
-          style: _lancamento.valor < 0
-              ? TextStyle(color: Colors.red)
-              : TextStyle(color: Colors.green),
-        ),
-        subtitle: Text(_lancamento.categoria),
-      ),
+      child: InkWell(
+          splashColor: Colors.blue.withAlpha(30),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return FormularioLancamento(_lancamento);
+            })).then((lancamento) => _ListaLancamentoState()._atualiza(lancamento));
+          },
+          child: ListTile(
+              leading: Icon(Icons.monetization_on),
+              title: Text(
+                _lancamento.valor.toString(),
+                style: _lancamento.valor < 0
+                    ? TextStyle(color: Colors.red)
+                    : TextStyle(color: Colors.green),
+              ),
+              subtitle: Text(_lancamento.categoria))),
     );
   }
 }
