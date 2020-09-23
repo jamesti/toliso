@@ -28,8 +28,8 @@ class FormularioLancamento extends StatefulWidget {
 
   final Lancamento _lancamento;
 
-  FormularioLancamento([this._lancamento]){
-    if (_lancamento != null){
+  FormularioLancamento([this._lancamento]) {
+    if (_lancamento != null) {
       _controladorCampoValor.text = _lancamento.valor.toString();
       _seletorListaCategoria.valorSelecionado = _lancamento.categoria;
     }
@@ -90,10 +90,19 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
     final double valor = double.tryParse(widget._controladorCampoValor.text);
     final String categoria = widget._seletorListaCategoria.valorSelecionado;
     final DateTime data_cadastro = DateTime.now();
-    final Lancamento lancamento = Lancamento(valor, categoria, data_cadastro);
+    int id = 0;
 
-    if (lancamento != null) {
-      _dao.save(lancamento).then((id) => Navigator.pop(context, lancamento));
+    if (widget._lancamento != null) {
+      id = widget._lancamento.id;
+    }
+
+    final Lancamento lancamento =
+        Lancamento(valor, categoria, data_cadastro, id);
+
+    if (lancamento != null && lancamento.id > 0) {
+      _dao.update(lancamento).then((id) => Navigator.pop(context));
+    } else if (lancamento != null) {
+      _dao.save(lancamento).then((id) => Navigator.pop(context));
     } else {
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Erro Inesperado!')));

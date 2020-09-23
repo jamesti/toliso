@@ -48,7 +48,9 @@ class _ListaLancamentoState extends State<ListaLancamento> {
               return ListView.builder(
                 itemBuilder: (context, index) {
                   final lancamento = widget._listaLancamentos[index];
-                  return ItemLancamento(lancamento);
+                  return ItemLancamento(lancamento, () {
+                    setState(() {});
+                  });
                 },
                 itemCount: widget._listaLancamentos.length,
               );
@@ -57,13 +59,6 @@ class _ListaLancamentoState extends State<ListaLancamento> {
           return Text('Unknown error');
         },
       ),
-      /*ListView.builder(
-        itemCount: widget._listaLancamentos.length,
-      itemBuilder: (context, index) {
-        final lancamento = widget._listaLancamentos[index];
-        return ItemLancamento(lancamento);
-      },
-    ),*/
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         backgroundColor: Colors.brown,
@@ -77,18 +72,17 @@ class _ListaLancamentoState extends State<ListaLancamento> {
   }
 
   void _atualiza(lancamento) {
-    if (lancamento != null) {
-      setState(() {
-        //widget._listaLancamentos.add(lancamento);
-      });
-    }
+    setState(() {});
   }
 }
 
+typedef StateCallback = void Function();
+
 class ItemLancamento extends StatelessWidget {
   final Lancamento _lancamento;
+  final StateCallback _setState;
 
-  ItemLancamento(this._lancamento);
+  ItemLancamento(this._lancamento, [this._setState]);
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +92,7 @@ class ItemLancamento extends StatelessWidget {
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return FormularioLancamento(_lancamento);
-            })).then((lancamento) => _ListaLancamentoState()._atualiza(lancamento));
+            })).then((value) => _setState());
           },
           child: ListTile(
               leading: Icon(Icons.monetization_on),
@@ -108,7 +102,48 @@ class ItemLancamento extends StatelessWidget {
                     ? TextStyle(color: Colors.red)
                     : TextStyle(color: Colors.green),
               ),
+              trailing: IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  _excluirLancamento(context);
+                },
+              ),
               subtitle: Text(_lancamento.categoria))),
+    );
+  }
+
+  Future<void> _excluirLancamento(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Excluir Lançamento'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Tem certeza?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Excluir'),
+              onPressed: () {
+                new LancamentoDao().delete(_lancamento);
+                _setState();
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
