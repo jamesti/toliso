@@ -1,14 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:tolise/components/editor.dart';
 import 'package:tolise/components/seletor.dart';
 import 'package:tolise/database/dao/lancamento.dart';
 import 'package:tolise/models/lancamento.dart';
 import 'package:tolise/screens/lancamento/validacoes.dart';
+import 'package:tolise/models/logradouro.dart';
+import 'package:http/http.dart' as http;
 
 const _tituloAppBar = 'Novo Lançamento';
 
 const _rotuloCampoValor = 'Valor';
 const _dicaCampoValor = '0.00';
+
+const _rotuloCampoCep = 'CEP';
+const _dicaCampoCep = '99999-99';
+
+const _rotuloCampoLogradouro = 'Logradouro';
+const _rotuloCampoCidade = 'Cidade/UF';
 
 const _rotuloCampoCategoria = 'Categoria';
 const List<String> _listaCategorias = ['Aluguel', 'Alimentação', 'Transporte'];
@@ -16,8 +26,22 @@ const _dicaCampoCategoria = 'Selecione uma Categoria';
 
 const _rotuloBotaoInserir = 'Salvar';
 
+Future<Logradouro> fetchViaCep(String cep) async {
+  final response = await http.get('https://viacep.com.br/ws/$cep/json');
+
+  if (response.statusCode == 200) {
+    return Logradouro.fromJson(json.decode(response.body));
+  } else {
+    throw Exception('CEP Inválido!');
+  }
+}
+
 class FormularioLancamento extends StatefulWidget {
   final TextEditingController _controladorCampoValor = TextEditingController();
+  final TextEditingController _controladorCampoCep = TextEditingController();
+  final TextEditingController _controladorCampoLogradouro =
+      TextEditingController();
+  final TextEditingController _controladorCampoCidade = TextEditingController();
 
   final Seletor _seletorListaCategoria = Seletor(
     lista: _listaCategorias,
@@ -59,6 +83,23 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
             padding: EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
+                Editor(
+                    controlador: widget._controladorCampoCep,
+                    rotulo: _rotuloCampoCep,
+                    dica: _dicaCampoCep,
+                    icone: Icons.map),
+                BuscarCep(
+                    widget._controladorCampoCep,
+                    widget._controladorCampoLogradouro,
+                    widget._controladorCampoCidade),
+                Editor(
+                    controlador: widget._controladorCampoLogradouro,
+                    rotulo: _rotuloCampoLogradouro,
+                    icone: Icons.map),
+                Editor(
+                    controlador: widget._controladorCampoCidade,
+                    rotulo: _rotuloCampoCidade,
+                    icone: Icons.map),
                 Editor(
                   controlador: widget._controladorCampoValor,
                   rotulo: _rotuloCampoValor,
@@ -107,5 +148,34 @@ class _FormularioLancamentoState extends State<FormularioLancamento> {
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Erro Inesperado!')));
     }
+  }
+}
+
+class BuscarCep extends StatelessWidget {
+  final TextEditingController _controladorCampoCep;
+  final TextEditingController _controladorCampoLogradouro;
+  final TextEditingController _controladorCampoCidade;
+
+  BuscarCep(this._controladorCampoCep, this._controladorCampoLogradouro,
+      this._controladorCampoCidade);
+
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      child: Text('Buscar'),
+      onPressed: () async {
+        try {
+          var log = await fetchViaCep(_controladorCampoCep.text);
+          _controladorCampoLogradouro.text =
+              '${log.logradouro} ${log.complemento} / ${log.bairro}';
+          _controladorCampoCidade.text = '${log.localidade} / ${log.uf}';
+        } catch (ex) {
+          final snackBar = SnackBar(
+            content: Text(ex.toString()),
+          );
+          Scaffold.of(context).showSnackBar(snackBar);
+        }
+      },
+    );
   }
 }

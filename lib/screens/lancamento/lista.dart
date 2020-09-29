@@ -15,6 +15,8 @@ class ListaLancamento extends StatefulWidget {
 class _ListaLancamentoState extends State<ListaLancamento> {
   final LancamentoDao _dao = new LancamentoDao();
 
+  GlobalKey<_ListaLancamentoState> _myKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +25,7 @@ class _ListaLancamentoState extends State<ListaLancamento> {
         centerTitle: true,
       ),
       body: FutureBuilder<List<Lancamento>>(
+        key: _myKey,
         initialData: List(),
         future: _dao.findAll(),
         builder: (context, snapshot) {
@@ -68,6 +71,7 @@ class _ListaLancamentoState extends State<ListaLancamento> {
           })).then((lancamento) => _atualiza(lancamento));
         },
       ),
+      bottomNavigationBar: ,
     );
   }
 
